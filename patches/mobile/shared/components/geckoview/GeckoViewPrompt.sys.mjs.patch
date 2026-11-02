@@ -1,0 +1,29 @@
+diff --git a/mobile/shared/components/geckoview/GeckoViewPrompt.sys.mjs b/mobile/shared/components/geckoview/GeckoViewPrompt.sys.mjs
+index e1c073c862..d9c33fc55b 100644
+--- a/mobile/shared/components/geckoview/GeckoViewPrompt.sys.mjs
++++ b/mobile/shared/components/geckoview/GeckoViewPrompt.sys.mjs
+@@ -48,7 +48,7 @@ export class PromptFactory {
+   _handleClick(aEvent) {
+     const target = aEvent.composedTarget;
+     const className = ChromeUtils.getClassName(target);
+-    if (className !== "HTMLInputElement" && className !== "HTMLSelectElement") {
++    if (className !== "HTMLInputElement") {
+       return;
+     }
+ 
+@@ -63,15 +63,6 @@ export class PromptFactory {
+       return;
+     }
+ 
+-    if (className === "HTMLSelectElement") {
+-      if (!target.isCombobox) {
+-        this._handleSelect(target, /* aIsDropDown = */ false);
+-        return;
+-      }
+-      // combobox select is handled by mozshowdropdown.
+-      return;
+-    }
+-
+     const type = target.type;
+     if (type === "month" || type === "week") {
+       // TODO(bug 888320, bug 1283382, bug 1283383): Remove this once we

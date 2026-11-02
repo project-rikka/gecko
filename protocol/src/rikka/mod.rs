@@ -1,6 +1,7 @@
 pub mod capture;
 pub mod certificates;
 pub mod downloads;
+pub mod dropdown;
 pub mod editing;
 pub mod extensions;
 pub mod links;

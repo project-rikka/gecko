@@ -1,0 +1,62 @@
+diff --git a/toolkit/modules/ActorManagerParent.sys.mjs b/toolkit/modules/ActorManagerParent.sys.mjs
+index c63bcb4c3b..5542979699 100644
+--- a/toolkit/modules/ActorManagerParent.sys.mjs
++++ b/toolkit/modules/ActorManagerParent.sys.mjs
+@@ -715,9 +715,13 @@ if (AppConstants.platform != "android") {
+   };
+ 
+   // Note that GeckoView has another implementation in mobile/android/actors.
++  // Rikka hands the dropdown to its embedder through RikkaSelectParent.
+   JSWINDOWACTORS.Select = {
+     parent: {
+-      esModuleURI: "moz-src:///toolkit/actors/SelectParent.sys.mjs",
++      esModuleURI:
++        AppConstants.MOZ_BUILD_APP == "rikka"
++          ? "resource://gre/modules/RikkaSelectParent.sys.mjs"
++          : "moz-src:///toolkit/actors/SelectParent.sys.mjs",
+     },
+ 
+     child: {
+@@ -734,24 +738,27 @@ if (AppConstants.platform != "android") {
+     safeForUntrustedWebProcess: true,
+   };
+ 
+-  // Note that GeckoView handles MozOpenDateTimePicker in GeckoViewPrompt.
+-  JSWINDOWACTORS.DateTimePicker = {
+-    parent: {
+-      esModuleURI: "moz-src:///toolkit/actors/DateTimePickerParent.sys.mjs",
+-    },
++  // Note that GeckoView handles MozOpenDateTimePicker in GeckoViewPrompt,
++  // which is also what Rikka shows.
++  if (AppConstants.MOZ_BUILD_APP != "rikka") {
++    JSWINDOWACTORS.DateTimePicker = {
++      parent: {
++        esModuleURI: "moz-src:///toolkit/actors/DateTimePickerParent.sys.mjs",
++      },
+ 
+-    child: {
+-      esModuleURI: "moz-src:///toolkit/actors/DateTimePickerChild.sys.mjs",
+-      events: {
+-        MozOpenDateTimePicker: {},
+-        MozCloseDateTimePicker: {},
++      child: {
++        esModuleURI: "moz-src:///toolkit/actors/DateTimePickerChild.sys.mjs",
++        events: {
++          MozOpenDateTimePicker: {},
++          MozCloseDateTimePicker: {},
++        },
+       },
+-    },
+ 
+-    includeChrome: true,
+-    allFrames: true,
+-    safeForUntrustedWebProcess: true,
+-  };
++      includeChrome: true,
++      allFrames: true,
++      safeForUntrustedWebProcess: true,
++    };
++  }
+ 
+   JSWINDOWACTORS.PictureInPictureLauncher = {
+     parent: {

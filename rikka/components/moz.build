@@ -25,6 +25,7 @@ EXTRA_JS_MODULES += [
     "RikkaPageChild.sys.mjs",
     "RikkaPageParent.sys.mjs",
     "RikkaSave.sys.mjs",
+    "RikkaSelectParent.sys.mjs",
     "RikkaStartup.sys.mjs",
     "RikkaStorage.sys.mjs",
     "RikkaUserContent.sys.mjs",

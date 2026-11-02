@@ -6,7 +6,7 @@ use crate::geckoview::{
     print, progress, prompt, runtime, selection, session_state,
 };
 use crate::rikka::{
-    capture, certificates, downloads, editing, links, notifications, user_content, view,
+    capture, certificates, downloads, dropdown, editing, links, notifications, user_content, view,
 };
 
 inbound! {
@@ -81,6 +81,9 @@ inbound! {
         CertificateError(certificates::CertificateError),
         RikkaContextMenu(editing::ContextMenu),
         CaptureChanged(capture::CaptureChanged),
+        ShowDropdown(dropdown::ShowDropdown),
+        UpdateDropdown(dropdown::UpdateDropdown),
+        HideDropdown(dropdown::HideDropdown),
     }
 }
 

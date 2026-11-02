@@ -1,14 +1,19 @@
+use rikka_gecko_protocol::geckoview::geometry::Rect;
 use rikka_gecko_protocol::geckoview::navigation::{ErrorClass, OpenWhere};
 use rikka_gecko_protocol::inbound::WindowEvent;
 use rikka_gecko_protocol::rikka::capture::{CaptureState, StopCapture};
 use rikka_gecko_protocol::rikka::certificates::AllowCertificate;
+use rikka_gecko_protocol::rikka::dropdown::{
+    ChosenWith, DropdownChoice, DropdownGroup, DropdownId, DropdownItem, DropdownOption,
+    ShowDropdown,
+};
 use rikka_gecko_protocol::rikka::editing::{
     AddToDictionary, Edit, EditCommand, ReplaceMisspelling, Spelling,
 };
 use rikka_gecko_protocol::rikka::view::{Download, PermitUnload};
 use serde_json::{Value, json};
 
-use crate::support::{gecko_reply, sent_data, window_event};
+use crate::support::{answered, gecko_reply, sent_data, window_event};
 
 #[test]
 fn decodes_view_events_as_the_components_build_them() {
@@ -120,5 +125,94 @@ fn reads_the_nss_error_class_of_load_errors() {
     ];
     for (code, class) in cases {
         assert_eq!(ErrorClass::from_code(code), class);
+    }
+}
+
+#[test]
+fn carries_dropdowns_as_rikka_select_parent_builds_them() {
+    let WindowEvent::ShowDropdown(shown) = window_event(
+        "Rikka:View:Dropdown",
+        json!({
+            "id": 3,
+            "rect": {"left": 12.5, "top": 40, "right": 212.5, "bottom": 64},
+            "items": [
+                {"kind": "option", "index": 0, "label": "English", "disabled": false, "tooltip": null},
+                {"kind": "separator"},
+                {"kind": "group", "label": "Asia", "disabled": true, "options": [
+                    {"kind": "option", "index": 1, "label": "日本語", "disabled": true, "tooltip": "Japanese"},
+                ]},
+            ],
+            "selected": null,
+        }),
+    ) else {
+        panic!()
+    };
+    assert_eq!(shown.id, DropdownId(3));
+    assert_eq!(
+        shown.rect,
+        Rect {
+            left: 12.5,
+            top: 40.0,
+            right: 212.5,
+            bottom: 64.0
+        }
+    );
+    assert_eq!(shown.selected, None);
+    assert_eq!(
+        shown.items,
+        [
+            DropdownItem::Option(DropdownOption {
+                index: 0,
+                label: "English".to_owned(),
+                disabled: false,
+                tooltip: None,
+            }),
+            DropdownItem::Separator,
+            DropdownItem::Group(DropdownGroup {
+                label: "Asia".to_owned(),
+                disabled: true,
+                options: vec![DropdownOption {
+                    index: 1,
+                    label: "日本語".to_owned(),
+                    disabled: true,
+                    tooltip: Some("Japanese".to_owned()),
+                }],
+            }),
+        ]
+    );
+
+    let WindowEvent::UpdateDropdown(updated) = window_event(
+        "Rikka:View:DropdownUpdated",
+        json!({"id": 3, "items": [], "selected": 1}),
+    ) else {
+        panic!()
+    };
+    assert_eq!((updated.id, updated.selected), (DropdownId(3), Some(1)));
+    let WindowEvent::HideDropdown(hidden) =
+        window_event("Rikka:View:DropdownHidden", json!({"id": 3}))
+    else {
+        panic!()
+    };
+    assert_eq!(hidden.id, DropdownId(3));
+
+    let cases = [
+        (
+            Some(DropdownChoice {
+                index: 1,
+                with: ChosenWith::Keyboard,
+            }),
+            json!({"index": 1, "with": "keyboard"}),
+        ),
+        (
+            Some(DropdownChoice {
+                index: 0,
+                with: ChosenWith::Pointer,
+            }),
+            json!({"index": 0, "with": "pointer"}),
+        ),
+        (None, Value::Null),
+    ];
+    for (choice, expected) in cases {
+        assert_eq!(answered::<ShowDropdown>(&choice), expected);
     }
 }

@@ -1,0 +1,13 @@
+diff --git a/mobile/shared/components/geckoview/GeckoViewStartup.sys.mjs b/mobile/shared/components/geckoview/GeckoViewStartup.sys.mjs
+index fb883b8efb..b052b4d12a 100644
+--- a/mobile/shared/components/geckoview/GeckoViewStartup.sys.mjs
++++ b/mobile/shared/components/geckoview/GeckoViewStartup.sys.mjs
+@@ -77,8 +77,6 @@ const JSWINDOWACTORS = {
+       esModuleURI: "resource:///actors/GeckoViewPromptChild.sys.mjs",
+       events: {
+         click: { capture: false, mozSystemGroup: true },
+-        mozshowdropdown: {},
+-        "mozshowdropdown-sourcetouch": {},
+         MozOpenDateTimePicker: {},
+         DOMPopupBlocked: { capture: false, mozSystemGroup: true },
+         DOMRedirectBlocked: { capture: false, mozSystemGroup: true },
