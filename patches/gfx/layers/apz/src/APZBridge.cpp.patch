@@ -1,8 +1,8 @@
-diff --git a/gfx/layers/apz/src/APZInputBridge.cpp b/gfx/layers/apz/src/APZInputBridge.cpp
-index 7b2657d5b5..015c505d1c 100644
---- a/gfx/layers/apz/src/APZInputBridge.cpp
-+++ b/gfx/layers/apz/src/APZInputBridge.cpp
-@@ -334,7 +334,10 @@ APZEventResult APZInputBridge::ReceiveInputEvent(
+diff --git a/gfx/layers/apz/src/APZBridge.cpp b/gfx/layers/apz/src/APZBridge.cpp
+index f51d2818ae5..13bc66c9c98 100644
+--- a/gfx/layers/apz/src/APZBridge.cpp
++++ b/gfx/layers/apz/src/APZBridge.cpp
+@@ -333,7 +333,10 @@ APZEventResult APZBridge::ReceiveInputEvent(WidgetInputEvent& aEvent,
                StaticPrefs::general_smoothScroll_mouseWheel()) ||
               (wheelEvent.mDeltaMode ==
                    dom::WheelEvent_Binding::DOM_DELTA_PAGE &&
